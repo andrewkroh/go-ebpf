@@ -6,6 +6,10 @@ check:
 fmt:
 	@goimports -l -w -local github.com/andrewkroh .
 
+clean:
+	@rm -rf build cmd/execsnoop/execsnoop
+	@find . -name '*.o' -exec rm {} \;
+
 build_dir:
 	mkdir -p build/bin
 
