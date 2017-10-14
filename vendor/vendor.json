@@ -1,0 +1,43 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "ZKxETlJdB2XubMrZnXB0FQimVA8=",
+			"path": "github.com/Sirupsen/logrus",
+			"revision": "10f801ebc38b33738c9d17d50860f484a0988ff5",
+			"revisionTime": "2017-03-17T14:32:14Z"
+		},
+		{
+			"checksumSHA1": "GzyPSwjBWbCzbXzJQiAuwDDMTmw=",
+			"path": "github.com/iovisor/gobpf/elf",
+			"revision": "4dc1144cd2a0cc5dbae0b4db4691bd5a84ecc602",
+			"revisionTime": "2017-09-12T15:33:54Z"
+		},
+		{
+			"checksumSHA1": "5WkG5igak593xRbqa+dmbEr4VDs=",
+			"path": "github.com/iovisor/gobpf/elf/include",
+			"revision": "4dc1144cd2a0cc5dbae0b4db4691bd5a84ecc602",
+			"revisionTime": "2017-09-12T15:33:54Z"
+		},
+		{
+			"checksumSHA1": "oCkTxswYPo40CSinHng80yaFFmo=",
+			"path": "github.com/iovisor/gobpf/pkg/bpffs",
+			"revision": "4dc1144cd2a0cc5dbae0b4db4691bd5a84ecc602",
+			"revisionTime": "2017-09-12T15:33:54Z"
+		},
+		{
+			"checksumSHA1": "MZgRY/E4XdxUWP7E/OmFSPnPJbI=",
+			"path": "github.com/iovisor/gobpf/pkg/cpuonline",
+			"revision": "4dc1144cd2a0cc5dbae0b4db4691bd5a84ecc602",
+			"revisionTime": "2017-09-12T15:33:54Z"
+		},
+		{
+			"checksumSHA1": "ynJSWoF6v+3zMnh9R0QmmG6iGV8=",
+			"path": "github.com/pkg/errors",
+			"revision": "ff09b135c25aae272398c51a07235b90a75aa4f0",
+			"revisionTime": "2017-03-16T20:15:38Z"
+		}
+	],
+	"rootPath": "github.com/andrewkroh/go-ebpf"
+}
