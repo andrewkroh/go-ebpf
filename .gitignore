@@ -1,0 +1,7 @@
+*.o
+.vagrant
+.idea
+*.iml
+
+build/
+cmd/execsnoop/execsnoop
