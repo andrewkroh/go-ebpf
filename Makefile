@@ -9,6 +9,7 @@ all: execsnoop
 check:
 	@go get golang.org/x/tools/cmd/goimports
 	@goimports -l -local github.com/andrewkroh . | (! grep .) || (echo "Code differs from goimports' style ^" && false)
+	@go run scripts/check_copyright.go .
 
 fmt:
 	@goimports -l -w -local github.com/andrewkroh .
