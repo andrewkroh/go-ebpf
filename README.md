@@ -26,7 +26,10 @@ available for the x86-64, arm64, and s390 architectures. It can be enabled by
 
 Package documentation can be found on [GoDoc][godocs].
 
-Installation can be done with a normal `go get`:
+Installation can be done with a normal `go get` or you can download a binary
+from the [releases][releases] page.
+
+[releases]: https://github.com/andrewkroh/go-ebpf/releases
 
 ```
 $ go install github.com/andrewkroh/go-ebpf/cmd/execsnoop
