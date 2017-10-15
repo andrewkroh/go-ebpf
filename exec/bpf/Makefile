@@ -1,5 +1,6 @@
 project_root=../..
 uname=$(shell uname -r)
+kernel_src=$(shell rpm -qa kernel-devel | tail -1 | sed 's/kernel-devel-//g' | awk '{print "/usr/src/kernels/"$$1""}')
 
 all: build copy
 
@@ -10,10 +11,9 @@ build:
       -Wno-address-of-packed-member \
       -O2 -emit-llvm -c exec.c \
       -I $(project_root)/common/bpf \
-      -I /lib/modules/$(uname)/source/include \
-      -I /lib/modules/$(uname)/source/arch/x86/include \
-      -I /lib/modules/$(uname)/build/include \
-      -I /lib/modules/$(uname)/build/arch/x86/include/generated \
+      -I $(kernel_src)/arch/x86/include \
+      -I $(kernel_src)/arch/x86/include/generated \
+      -I $(kernel_src)/include \
       -o - | \
       llc -march=bpf -filetype=obj -o exec.o
 
