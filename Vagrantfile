@@ -22,7 +22,7 @@ echo 'export PATH=~/bin:$GOPATH/bin:$PATH' >> ~/.bashrc
 echo 'eval "$(gvm 1.9.1)"' >> ~/.bashrc
 echo 'alias vim=vi' >> ~/.bashrc
 mkdir -p ~/go/src/github.com/andrewkroh
-ln -s /vagrant ~/go/src/github.com/andrewkroh/go-bpf
+ln -s /vagrant ~/go/src/github.com/andrewkroh/go-ebpf
 SCRIPT
 
 Vagrant.configure("2") do |config|
