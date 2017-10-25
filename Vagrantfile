@@ -8,6 +8,9 @@ dnf update -y
 dnf install -y git gcc ncurses-devel elfutils-libelf-devel bc \
   openssl-devel libcap-devel clang llvm
 
+# jq because isn't convenient.
+dnf install -y jq
+
 dnf clean all
 SCRIPT
 
