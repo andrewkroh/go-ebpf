@@ -32,15 +32,15 @@ import (
 
 var log = logrus.WithField("selector", "main")
 
-var (
-	outputJSON = flag.Bool("json", false, "output json")
-)
-
 func main() {
 	flag.Parse()
 
 	// Start the exec syscall monitor.
-	m := exec.NewMonitor()
+	m, err := exec.NewMonitor()
+	if err != nil {
+		log.WithError(err).Fatal("failed to create exec monitor")
+	}
+
 	done := make(chan struct{})
 	events, err := m.Start(done)
 	if err != nil {
@@ -57,11 +57,7 @@ func main() {
 
 	// Read incoming exec events.
 	for e := range events {
-		if *outputJSON {
-			data, _ := json.Marshal(e)
-			fmt.Println(string(data))
-		} else {
-			fmt.Println(e.String())
-		}
+		data, _ := json.Marshal(e)
+		fmt.Println(string(data))
 	}
 }

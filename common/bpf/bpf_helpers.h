@@ -7,6 +7,12 @@
  */
 #define SEC(NAME) __attribute__((section(NAME), used))
 
+#define printt(fmt, ...)                                                   \
+        ({                                                                 \
+                char ____fmt[] = fmt;                                      \
+                bpf_trace_printk(____fmt, sizeof(____fmt), ##__VA_ARGS__); \
+        })
+
 /* helper functions called from eBPF programs written in C */
 static void *(*bpf_map_lookup_elem)(void *map, void *key) =
 	(void *) BPF_FUNC_map_lookup_elem;
@@ -45,6 +51,10 @@ static int (*bpf_skb_set_tunnel_key)(void *ctx, void *key, int size, int flags) 
 	(void *) BPF_FUNC_skb_set_tunnel_key;
 static unsigned long long (*bpf_get_prandom_u32)(void) =
 	(void *) BPF_FUNC_get_prandom_u32;
+static int (*bpf_current_task_under_cgroup)(void *map, int index) =
+	(void *) BPF_FUNC_current_task_under_cgroup;
+static int *(*bpf_get_current_task)(void) =
+	(void *) BPF_FUNC_get_current_task;
 
 /* llvm builtin functions that eBPF C program may use to
  * emit BPF_LD_ABS and BPF_LD_IND instructions

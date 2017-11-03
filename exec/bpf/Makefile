@@ -1,6 +1,6 @@
 project_root=../..
 uname=$(shell uname -r)
-kernel_src=$(shell rpm -qa kernel-devel | tail -1 | sed 's/kernel-devel-//g' | awk '{print "/usr/src/kernels/"$$1""}')
+kernel_src=$(shell rpm -qa kernel-devel | head -1 | sed 's/kernel-devel-//g' | awk '{print "/usr/src/kernels/"$$1""}')
 
 all: build copy
 
