@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-// +build ignore
-
 package main
 
 import (
 	"bytes"
+	"compress/gzip"
 	"encoding/base64"
 	"flag"
 	"fmt"
@@ -50,6 +49,11 @@ var tpl = template.Must(template.New("bindata").Parse(`
 package {{ .Package }}
 
 import (
+{{ if .GZip }}
+	"compress/gzip"
+	"bytes"
+	"io"
+{{- end}}
 	"encoding/base64"
 	"fmt"
 )
@@ -63,6 +67,7 @@ func asset(key string) ([]byte, error) {
 		var value []byte
 		{{- range $asset := .Assets }}
 		value, _ = base64.StdEncoding.DecodeString("{{ $asset.Data }}")
+		value, _ = gzipDecode(value)
 		assets["{{ $asset.Name }}"] = value{{ end }}
 	}
 
@@ -70,6 +75,25 @@ func asset(key string) ([]byte, error) {
 		return value, nil
 	}
 	return nil, fmt.Errorf("asset not found for key=%v", key)
+}
+
+func gzipDecode(data []byte) ([]byte, error) {
+{{- if .GZip }}
+	gz, err := gzip.NewReader(bytes.NewReader(data))
+	if err != nil {
+		return nil, err
+	}
+
+	out := new(bytes.Buffer)
+	if _, err = io.Copy(out, gz); err != nil {
+		return nil, err
+	}
+
+	return out.Bytes(), nil
+{{- else }}
+	// Data was not GZip encoded.
+	return data, nil
+{{- end }}
 }
 `))
 
@@ -86,6 +110,25 @@ func addAsset(key, file string) error {
 		return err
 	}
 
+	// gzip the data.
+	if *gzipEnabled {
+		buf := new(bytes.Buffer)
+		gz, err := gzip.NewWriterLevel(buf, gzip.BestCompression)
+		if err != nil {
+			return err
+		}
+		if _, err = gz.Write(data); err != nil {
+			return err
+		}
+		if err = gz.Flush(); err != nil {
+			return err
+		}
+		if err = gz.Close(); err != nil {
+			return err
+		}
+		data = buf.Bytes()
+	}
+
 	assets = append(assets, asset{
 		Name: key,
 		Data: base64.StdEncoding.EncodeToString(data),
@@ -95,11 +138,13 @@ func addAsset(key, file string) error {
 
 type templateVars struct {
 	Package string
+	GZip    bool
 	Assets  []asset
 }
 
 var (
-	pkgName = flag.String("pkg", "", "package name to use in generated file")
+	pkgName     = flag.String("pkg", "", "package name to use in generated file")
+	gzipEnabled = flag.Bool("gzip", true, "gzip contents")
 )
 
 func main() {
@@ -121,10 +166,14 @@ func main() {
 	}
 
 	var buf bytes.Buffer
-	tpl.Execute(&buf, templateVars{
+	err := tpl.Execute(&buf, templateVars{
 		Package: *pkgName,
+		GZip:    *gzipEnabled,
 		Assets:  assets,
 	})
+	if err != nil {
+		panic(err)
+	}
 	bs, err := format.Source(buf.Bytes())
 	if err != nil {
 		panic(err)
