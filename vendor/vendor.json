@@ -9,6 +9,12 @@
 			"revisionTime": "2017-03-17T14:32:14Z"
 		},
 		{
+			"checksumSHA1": "mrz/kicZiUaHxkyfvC/DyQcr8Do=",
+			"path": "github.com/davecgh/go-spew/spew",
+			"revision": "ecdeabc65495df2dec95d7c4a4c3e021903035e5",
+			"revisionTime": "2017-10-02T20:02:53Z"
+		},
+		{
 			"checksumSHA1": "GzyPSwjBWbCzbXzJQiAuwDDMTmw=",
 			"path": "github.com/iovisor/gobpf/elf",
 			"revision": "4dc1144cd2a0cc5dbae0b4db4691bd5a84ecc602",
@@ -39,6 +45,12 @@
 			"revisionTime": "2017-03-16T20:15:38Z"
 		},
 		{
+			"checksumSHA1": "LuFv4/jlrmFNnDb/5SCSEPAM9vU=",
+			"path": "github.com/pmezard/go-difflib/difflib",
+			"revision": "792786c7400a136282c1664665ae0a8db921c6c2",
+			"revisionTime": "2016-01-10T10:55:54Z"
+		},
+		{
 			"checksumSHA1": "Xz3eCkgd6JUO3Fxo7Owo+U3rTro=",
 			"origin": "github.com/andrewkroh/procfs",
 			"path": "github.com/prometheus/procfs",
@@ -50,6 +62,12 @@
 			"path": "github.com/prometheus/procfs/xfs",
 			"revision": "a6e9df898b1336106c743392c48ee0b71f5c4efa",
 			"revisionTime": "2017-10-17T21:40:25Z"
+		},
+		{
+			"checksumSHA1": "mGbTYZ8dHVTiPTTJu3ktp+84pPI=",
+			"path": "github.com/stretchr/testify/assert",
+			"revision": "2aa2c176b9dab406a6970f6a55f513e8a8c8b18f",
+			"revisionTime": "2017-08-14T20:04:35Z"
 		},
 		{
 			"path": "remove",

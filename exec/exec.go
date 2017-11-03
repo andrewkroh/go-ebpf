@@ -18,6 +18,7 @@ package exec
 
 import (
 	"bytes"
+	"sync"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -55,6 +56,7 @@ type ProcessMonitor struct {
 	bootTime     time.Time
 	procfs       procfs.FS
 	processTable map[uint32]*process
+	warnOnce     sync.Once
 
 	output chan interface{}
 	done   <-chan struct{}
@@ -198,9 +200,19 @@ func (m *ProcessMonitor) handleBPFData(data []byte) {
 		// Sanity check the RealStartTimeNS value.
 		if absDuration(event.RealStartTimeNS-event.KTimeNS) > 10*time.Second {
 			event.RealStartTimeNS = event.KTimeNS
-			// TODO: If this data is garbage then probably the PPID is too
-			// because they both came from the task_struct. We should try to get
-			// the value from /proc/PID/status in this case.
+
+			// task_struct data is probably garbage so fall-back to /proc/PID
+			status, err := m.procStatus(event.PID)
+			if err == nil {
+				event.PPID = status.PPID
+			}
+
+			m.warnOnce.Do(func() {
+				log.Warn("task_struct data from the kernel appears to be invalid " +
+					"and this affects the ability to get the PPID of short-lived " +
+					"processes. Recompiling the eBPF program for your kernel version " +
+					"will resolve this.")
+			})
 		}
 
 		m.processTable[event.PID] = &process{
@@ -299,6 +311,20 @@ func (m *ProcessMonitor) publish(p *process) {
 	case <-m.done:
 	case m.output <- event:
 	}
+}
+
+func (m *ProcessMonitor) procStatus(pid uint32) (*procfs.ProcStatus, error) {
+	p, err := m.procfs.NewProc(int(pid))
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := p.NewStatus()
+	if err != nil {
+		return nil, err
+	}
+
+	return &status, nil
 }
 
 func (m *ProcessMonitor) readProcs() ([]*process, error) {

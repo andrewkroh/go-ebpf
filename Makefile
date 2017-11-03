@@ -19,11 +19,16 @@ clean:
 	@find . -name '*.o' -exec rm {} \;
 
 build_dir:
-	mkdir -p build/bin
+	@mkdir -p build/bin
+	@mkdir -p build/test
 
 execsnoop: build_dir
 	$(MAKE) -C exec/bpf
 	go build -o build/bin/execsnoop ./cmd/execsnoop 
+
+execsnoop-test: build_dir
+	go test -c ./exec/ -o build/test/exec.test
+	sudo build/test/exec.test -test.v
 
 # For building inside of a Docker environment.
 docker-all: build-docker-image
