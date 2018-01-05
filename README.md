@@ -27,10 +27,17 @@ available for the x86-64, arm64, and s390 architectures. It can be enabled by
 Package documentation can be found on [GoDoc][godocs].
 
 Installation can be done with a normal `go get` or you can download a binary
-from the [releases][releases] page.
+from the [releases][releases] page. There's also a [Docker image][docker].
 
 [releases]: https://github.com/andrewkroh/go-ebpf/releases
+[docker]:   https://hub.docker.com/r/akroh/go-ebpf/tags/
 
+Docker:
+```
+docker run -it --rm --cap-add=SYS_ADMIN -v /sys/kernel/debug:/sys/kernel/debug akroh/go-ebpf:execsnoop
+```
+
+Go:
 ```
 $ go install github.com/andrewkroh/go-ebpf/cmd/execsnoop
 ```
