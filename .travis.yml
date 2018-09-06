@@ -2,7 +2,7 @@
 sudo: false
 language: go
 go:
-- 1.9.1
+- 1.11.x
 go_import_path: github.com/andrewkroh/go-ebpf
 
 script:

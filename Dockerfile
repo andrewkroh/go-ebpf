@@ -5,9 +5,9 @@ RUN dnf update -y && \
       openssl-devel libcap-devel clang llvm kernel-devel && \
     dnf clean all
 
-ENV GOLANG_VERSION 1.9.1
+ENV GOLANG_VERSION 1.11
 
-RUN curl -sL -o /usr/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.0.3/gvm-linux-amd64 && \
+RUN curl -sL -o /usr/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.1.0/gvm-linux-amd64 && \
     chmod +x /usr/bin/gvm && \
     gvm $GOLANG_VERSION && \
     ln -s /usr/local/go ~/.gvm/versions/go${GOLANG_VERSION}.linux.amd64
