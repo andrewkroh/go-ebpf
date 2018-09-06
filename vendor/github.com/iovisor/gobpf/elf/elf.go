@@ -50,6 +50,7 @@ import (
 #include <sys/socket.h>
 #include <linux/unistd.h>
 #include "include/bpf.h"
+#include "include/bpf_map.h"
 #include <poll.h>
 #include <linux/perf_event.h>
 #include <sys/resource.h>
@@ -542,6 +543,8 @@ func (b *Module) Load(parameters map[string]SectionParams) error {
 			isCgroupSock := strings.HasPrefix(secName, "cgroup/sock")
 			isSocketFilter := strings.HasPrefix(secName, "socket")
 			isTracepoint := strings.HasPrefix(secName, "tracepoint/")
+			isSchedCls := strings.HasPrefix(secName, "sched_cls/")
+			isSchedAct := strings.HasPrefix(secName, "sched_act/")
 
 			var progType uint32
 			switch {
@@ -557,9 +560,13 @@ func (b *Module) Load(parameters map[string]SectionParams) error {
 				progType = uint32(C.BPF_PROG_TYPE_SOCKET_FILTER)
 			case isTracepoint:
 				progType = uint32(C.BPF_PROG_TYPE_TRACEPOINT)
+			case isSchedCls:
+				progType = uint32(C.BPF_PROG_TYPE_SCHED_CLS)
+			case isSchedAct:
+				progType = uint32(C.BPF_PROG_TYPE_SCHED_ACT)
 			}
 
-			if isKprobe || isKretprobe || isCgroupSkb || isCgroupSock || isSocketFilter || isTracepoint {
+			if isKprobe || isKretprobe || isCgroupSkb || isCgroupSock || isSocketFilter || isTracepoint || isSchedCls || isSchedAct {
 				rdata, err := rsection.Data()
 				if err != nil {
 					return err
@@ -614,6 +621,14 @@ func (b *Module) Load(parameters map[string]SectionParams) error {
 						insns: insns,
 						fd:    int(progFd),
 					}
+				case isSchedCls:
+					fallthrough
+				case isSchedAct:
+					b.schedPrograms[secName] = &SchedProgram{
+						Name:  secName,
+						insns: insns,
+						fd:    int(progFd),
+					}
 				}
 			}
 		}
@@ -632,6 +647,8 @@ func (b *Module) Load(parameters map[string]SectionParams) error {
 		isCgroupSock := strings.HasPrefix(secName, "cgroup/sock")
 		isSocketFilter := strings.HasPrefix(secName, "socket")
 		isTracepoint := strings.HasPrefix(secName, "tracepoint/")
+		isSchedCls := strings.HasPrefix(secName, "sched_cls/")
+		isSchedAct := strings.HasPrefix(secName, "sched_act/")
 
 		var progType uint32
 		switch {
@@ -647,9 +664,13 @@ func (b *Module) Load(parameters map[string]SectionParams) error {
 			progType = uint32(C.BPF_PROG_TYPE_SOCKET_FILTER)
 		case isTracepoint:
 			progType = uint32(C.BPF_PROG_TYPE_TRACEPOINT)
+		case isSchedCls:
+			progType = uint32(C.BPF_PROG_TYPE_SCHED_CLS)
+		case isSchedAct:
+			progType = uint32(C.BPF_PROG_TYPE_SCHED_ACT)
 		}
 
-		if isKprobe || isKretprobe || isCgroupSkb || isCgroupSock || isSocketFilter || isTracepoint {
+		if isKprobe || isKretprobe || isCgroupSkb || isCgroupSock || isSocketFilter || isTracepoint || isSchedCls || isSchedAct {
 			data, err := section.Data()
 			if err != nil {
 				return err
@@ -699,6 +720,14 @@ func (b *Module) Load(parameters map[string]SectionParams) error {
 					insns: insns,
 					fd:    int(progFd),
 				}
+			case isSchedCls:
+				fallthrough
+			case isSchedAct:
+				b.schedPrograms[secName] = &SchedProgram{
+					Name:  secName,
+					insns: insns,
+					fd:    int(progFd),
+				}
 			}
 		}
 	}
@@ -721,7 +750,7 @@ func (b *Module) initializePerfMaps(parameters map[string]SectionParams) error {
 				continue
 			}
 			if params.PerfRingBufferPageCount > 0 {
-				if params.PerfRingBufferPageCount <= 0 || (params.PerfRingBufferPageCount&(params.PerfRingBufferPageCount-1)) != 0 {
+				if (params.PerfRingBufferPageCount & (params.PerfRingBufferPageCount - 1)) != 0 {
 					return fmt.Errorf("number of pages (%d) must be stricly positive and a power of 2", params.PerfRingBufferPageCount)
 				}
 				b.maps[name].pageCount = params.PerfRingBufferPageCount

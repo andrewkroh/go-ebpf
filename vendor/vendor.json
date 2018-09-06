@@ -15,28 +15,28 @@
 			"revisionTime": "2017-10-02T20:02:53Z"
 		},
 		{
-			"checksumSHA1": "GzyPSwjBWbCzbXzJQiAuwDDMTmw=",
+			"checksumSHA1": "Z8VeWhPgAZLUdABrNkJdoCHnEeY=",
 			"path": "github.com/iovisor/gobpf/elf",
-			"revision": "4dc1144cd2a0cc5dbae0b4db4691bd5a84ecc602",
-			"revisionTime": "2017-09-12T15:33:54Z"
+			"revision": "4ece6c56f93637c86338885d37e98ff0fb97b4c9",
+			"revisionTime": "2018-08-26T14:19:36Z"
 		},
 		{
-			"checksumSHA1": "5WkG5igak593xRbqa+dmbEr4VDs=",
+			"checksumSHA1": "pfwftTJRtc7w311xPBpZKKHxW4c=",
 			"path": "github.com/iovisor/gobpf/elf/include",
-			"revision": "4dc1144cd2a0cc5dbae0b4db4691bd5a84ecc602",
-			"revisionTime": "2017-09-12T15:33:54Z"
+			"revision": "4ece6c56f93637c86338885d37e98ff0fb97b4c9",
+			"revisionTime": "2018-08-26T14:19:36Z"
 		},
 		{
-			"checksumSHA1": "oCkTxswYPo40CSinHng80yaFFmo=",
+			"checksumSHA1": "8Hjxpu9eaOK5C92srTLQKXzR1+Y=",
 			"path": "github.com/iovisor/gobpf/pkg/bpffs",
-			"revision": "4dc1144cd2a0cc5dbae0b4db4691bd5a84ecc602",
-			"revisionTime": "2017-09-12T15:33:54Z"
+			"revision": "4ece6c56f93637c86338885d37e98ff0fb97b4c9",
+			"revisionTime": "2018-08-26T14:19:36Z"
 		},
 		{
 			"checksumSHA1": "MZgRY/E4XdxUWP7E/OmFSPnPJbI=",
 			"path": "github.com/iovisor/gobpf/pkg/cpuonline",
-			"revision": "4dc1144cd2a0cc5dbae0b4db4691bd5a84ecc602",
-			"revisionTime": "2017-09-12T15:33:54Z"
+			"revision": "4ece6c56f93637c86338885d37e98ff0fb97b4c9",
+			"revisionTime": "2018-08-26T14:19:36Z"
 		},
 		{
 			"checksumSHA1": "ynJSWoF6v+3zMnh9R0QmmG6iGV8=",

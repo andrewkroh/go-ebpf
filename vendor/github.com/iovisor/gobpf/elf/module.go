@@ -83,9 +83,9 @@ int bpf_attach_socket(int sock, int fd)
 	return setsockopt(sock, SOL_SOCKET, SO_ATTACH_BPF, &fd, sizeof(fd));
 }
 
-int bpf_detach_socket(int sock)
+int bpf_detach_socket(int sock, int fd)
 {
-	return setsockopt(sock, SOL_SOCKET, SO_DETACH_BPF, NULL, 0);
+	return setsockopt(sock, SOL_SOCKET, SO_DETACH_BPF, &fd, sizeof(fd));
 }
 */
 import "C"
@@ -101,6 +101,7 @@ type Module struct {
 	cgroupPrograms     map[string]*CgroupProgram
 	socketFilters      map[string]*SocketFilter
 	tracepointPrograms map[string]*TracepointProgram
+	schedPrograms      map[string]*SchedProgram
 }
 
 // Kprobe represents a kprobe or kretprobe and has to be declared
@@ -142,12 +143,20 @@ type TracepointProgram struct {
 	efd   int
 }
 
+// SchedProgram represents a traffic classifier program
+type SchedProgram struct {
+	Name  string
+	insns *C.struct_bpf_insn
+	fd    int
+}
+
 func newModule() *Module {
 	return &Module{
 		probes:             make(map[string]*Kprobe),
 		cgroupPrograms:     make(map[string]*CgroupProgram),
 		socketFilters:      make(map[string]*SocketFilter),
 		tracepointPrograms: make(map[string]*TracepointProgram),
+		schedPrograms:      make(map[string]*SchedProgram),
 		log:                make([]byte, 524288),
 	}
 }
@@ -210,6 +219,11 @@ func perfEventOpenTracepoint(id int, progFd int) (int, error) {
 		return -1, fmt.Errorf("error attaching bpf program to perf event: %v", err)
 	}
 	return int(efd), nil
+}
+
+// Log gives users access to the log buffer with verifier messages
+func (b *Module) Log() []byte {
+	return b.log
 }
 
 // EnableKprobe enables a kprobe/kretprobe identified by secName.
@@ -275,6 +289,9 @@ func (b *Module) EnableTracepoint(secName string) error {
 	progFd := prog.fd
 
 	tracepointGroup := strings.SplitN(secName, "/", 3)
+	if len(tracepointGroup) != 3 {
+		return fmt.Errorf("invalid section name %q, expected tracepoint/category/name", secName)
+	}
 	category := tracepointGroup[1]
 	name := tracepointGroup[2]
 
@@ -339,6 +356,10 @@ func (b *Module) CgroupProgram(name string) *CgroupProgram {
 	return b.cgroupPrograms[name]
 }
 
+func (p *CgroupProgram) Fd() int {
+	return p.fd
+}
+
 func AttachCgroupProgram(cgroupProg *CgroupProgram, cgroupPath string, attachType AttachType) error {
 	f, err := os.Open(cgroupPath)
 	if err != nil {
@@ -401,8 +422,8 @@ func (sf *SocketFilter) Fd() int {
 	return sf.fd
 }
 
-func DetachSocketFilter(sockFd int) error {
-	ret, err := C.bpf_detach_socket(C.int(sockFd))
+func DetachSocketFilter(socketFilter *SocketFilter, sockFd int) error {
+	ret, err := C.bpf_detach_socket(C.int(sockFd), C.int(socketFilter.fd))
 	if ret != 0 {
 		return fmt.Errorf("error detaching BPF socket filter: %v", err)
 	}
@@ -439,6 +460,14 @@ func disableKprobe(eventName string) error {
 		}
 	}
 	return nil
+}
+
+func (b *Module) SchedProgram(name string) *SchedProgram {
+	return b.schedPrograms[name]
+}
+
+func (sp *SchedProgram) Fd() int {
+	return sp.fd
 }
 
 func (b *Module) closeProbes() error {
