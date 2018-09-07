@@ -1,4 +1,4 @@
-# Fedora 26 Vagrant Machine
+# Fedora Vagrant Machines
 
 # Update and install packages.
 $packages = <<SCRIPT
@@ -28,18 +28,42 @@ mkdir -p ~/go/src/github.com/andrewkroh
 ln -s /vagrant ~/go/src/github.com/andrewkroh/go-ebpf
 SCRIPT
 
+boxes = {
+  "fedora-26" => {
+    :url => 'https://download.fedoraproject.org/pub/fedora/linux/releases/26/CloudImages/x86_64/images/Fedora-Cloud-Base-Vagrant-26-1.5.x86_64.vagrant-virtualbox.box',
+    :ip  => '10.0.2.15',
+    :cpu => "100",
+    :ram => "512",
+  },
+  "fedora-28" => {
+    :url => 'https://download.fedoraproject.org/pub/fedora/linux/releases/28/Cloud/x86_64/images/Fedora-Cloud-Base-Vagrant-28-1.1.x86_64.vagrant-virtualbox.box',
+    :ip  => '10.0.2.16',
+    :cpu => "100",
+    :ram => "512",
+  },
+}
+
 Vagrant.configure("2") do |config|
-  # https://alt.fedoraproject.org/cloud/
-  config.vm.box_url = "https://download.fedoraproject.org/pub/fedora/linux/releases/26/CloudImages/x86_64/images/Fedora-Cloud-Base-Vagrant-26-1.5.x86_64.vagrant-virtualbox.box"
-  config.vm.box = "fedora-26-url"
+  boxes.each do |box_name, box|
+    config.vm.define box_name do |machine|
+      machine.vm.box_url = box[:url]
+      machine.vm.box = "%s" % box_name
+      machine.vm.hostname = "%s" % box_name
 
-  config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+      machine.vm.provider "virtualbox" do |v|
+        v.customize ["modifyvm", :id, "--cpuexecutioncap", box[:cpu]]
+        v.customize ["modifyvm", :id, "--memory",          box[:ram]]
+      end
 
-  # Requires vbguest plugin (run 'vagrant plugin install vagrant-vbguest').
-  # https://github.com/dotless-de/vagrant-vbguest
-  config.vbguest.auto_update = true
-  config.vbguest.no_remote = true
+      # Requires vbguest plugin (run 'vagrant plugin install vagrant-vbguest').
+      # https://github.com/dotless-de/vagrant-vbguest
+      machine.vbguest.auto_update = true
+      machine.vbguest.no_remote = true
 
-  config.vm.provision "shell", inline: $packages
-  config.vm.provision "shell", inline: $gvm, privileged: false
+      machine.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+
+      machine.vm.provision "shell", inline: $packages
+      machine.vm.provision "shell", inline: $gvm, privileged: false
+    end
+  end
 end
