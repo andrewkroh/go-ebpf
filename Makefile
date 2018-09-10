@@ -4,7 +4,7 @@ UID=$(shell id -u)
 GID=$(shell id -g)
 SUDO=$(shell docker info >/dev/null 2>&1 || echo "sudo -E")
 
-all: execsnoop
+all: execsnoop socketsnoop
 
 check:
 	@go get golang.org/x/tools/cmd/goimports
@@ -29,6 +29,10 @@ execsnoop: build_dir
 execsnoop-test: build_dir
 	go test -c ./exec/ -o build/test/exec.test
 	sudo build/test/exec.test -test.v
+
+socketsnoop: build_dir
+	$(MAKE) -C socket/bpf
+	go build -o build/bin/socketsnoop ./cmd/socketsnoop
 
 # For building inside of a Docker environment.
 docker-all: build-docker-image
