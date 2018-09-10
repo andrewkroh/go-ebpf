@@ -9,13 +9,17 @@ all: execsnoop socketsnoop
 check:
 	@go get golang.org/x/tools/cmd/goimports
 	@goimports -l -local github.com/andrewkroh . | (! grep .) || (echo "Code differs from goimports' style ^" && false)
-	@go run scripts/check_copyright.go .
+	@go get github.com/elastic/go-licenser
+	@go-licenser -d
+	@go-licenser -d -ext '.c'
 
 fmt:
 	@goimports -l -w -local github.com/andrewkroh .
+	@go-licenser
+	@go-licenser -ext '.c'
 
 clean:
-	@rm -rf build cmd/execsnoop/execsnoop
+	@rm -rf build cmd/execsnoop/execsnoop cmd/socketsnoop/socketsnoop
 	@find . -name '*.o' -exec rm {} \;
 
 build_dir:
