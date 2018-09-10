@@ -13,8 +13,9 @@ deploy:
   provider: releases
   api_key:
     secure: gi0aYwLiiCi2+ic592J8XGLjj2TnmwsC2WmG1dXh/7nfci6gOaxDQQB8A+L9NEL/Wdhm78tF5hYomVirQZVBoT+5e0JDyXpGab8GRl+5YihoT+gojdlle3V7BCJgbi8cB+QzxOc+nWNAVXvvteEMdVI7oYPsYHNSPd+YwkDUZsUG45i8i9XKUViS+8JeTltPiI1+8HpV1TrlFg7WjFXZabBI+zq4vd1redbq57AG8RYgUBRxKqXo0v2xi8+36jGn4aaq8GauzW643oGBG+JHivbIoyFQ5F0lq5hLc9TfhBSZFg0AaWut+a4+Wf3yjl0IdsGd1ga+xfgtP3e520qFzLiK0jX0+EVHDjBaqTz2OOH65CbDJb//LUX+pRBUg2xkxvDMQOS7TsICPh8KkW+mk3SUAoU6pveiIi9inyzf4JNE2idi78+RCpax1IK7zzKjZjHkPqTSTrAIXtuLXuvvX6QJLWOL+zX6jziUeOhgFamAjVOL4lst+Wx6d+eZNAQe0WMJF2DbAigSi+yU2/QCyfXUiXuVnz6qLNGPD/iE4mB1sNNdHdSU/nle//OcwnUEPk/TlpYI8aE8RQcEq1grk13ABiLxIOzMG3h5V1NIb0PBHrtVacuVhdg2VTQxSL/sQ2GBkI1eHz0V+cR0fKUZYLkDIjqEBI0tXcP382VWg14=
+  file_glob: true
   file:
-  - build/bin/execsnoop
+  - build/bin/*
   skip_cleanup: true
   on:
     tags: true
