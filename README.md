@@ -1,3 +1,8 @@
+**NOTE**: This project was an experiment and is now archived. In the time since this experiment
+eBPF has come a long way towards reaching the goal of having code that can be written once
+and run on every kernel version without needing BCC to compile the BPF code at runtime.
+Look up BPF CO-RE.
+
 # go-ebpf
 
 [![Build Status](http://img.shields.io/travis/andrewkroh/go-ebpf.svg?style=flat-square)][travis]
